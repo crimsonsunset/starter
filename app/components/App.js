@@ -3,6 +3,8 @@
 // import {a} from 'react-router-dom';
 // import Routes from 'config/routes';
 // import {React} from 'app/helpers';
+import $ from 'jquery';
+
 
 class App {
   constructor() {
@@ -10,7 +12,7 @@ class App {
   }
 
   template() {
-    return `<div>
+    return $(`<div>
         <nav className="navbar">
           <ul className="nav navbar-nav">
 
@@ -21,8 +23,11 @@ class App {
           </ul>
         </nav>
       </div>`
-
+    );
   }
 }
 
 export default App
+
+//todo: https://davidwalsh.name/convert-html-stings-dom-nodes
+//ContextualFragment
