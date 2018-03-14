@@ -1,24 +1,9 @@
-// import React from 'react';
-// import ReactDOM from 'react-dom';
-// import 'styles/index.scss';
 import App from 'components/App';
-import {React} from 'app/helpers';
-// const React = fakeReact();
 
-// ReactDOM.render(
-//   <Router/>,
-//   document.getElementById('app'));
+let app = new App().template();
+console.log(app);
 
+const tempDiv = document.createElement('div');
+tempDiv.innerHTML = app;
 
-// console.log('in main', App);
-// console.log('in main', new App());
-//
-//
-// document.getElementById('app').appendChild();
-
-let app = new App().render();
-
-
-document.getElementById('app').appendChild(
-  app
-);
+document.getElementById('app').appendChild(tempDiv);
