@@ -1,34 +1,26 @@
-import React, {Component} from 'react'
-import PropTypes from 'prop-types';
-import {Link} from 'react-router-dom';
-import Routes from 'config/routes';
+// import React, {Component} from 'react'
+// import PropTypes from 'prop-types';
+// import {a} from 'react-router-dom';
+// import Routes from 'config/routes';
+import {React} from 'app/helpers';
 
-
-class App extends Component {
-  constructor(props) {
-    super(props);
+class App {
+  constructor() {
     this.displayName = "App";
   }
-
-  // static propTypes = {};
 
   render() {
     return (
       <div>
-        <nav className="navbar navbar-light">
+        <nav className="navbar">
           <ul className="nav navbar-nav">
 
-            <li><Link to="/">Home</Link></li>
-            <li><Link to="/playground">Playground</Link></li>
-            <li><Link to="/not-found">Not Found</Link></li>
+            <li><a href="/">Home</a></li>
+            <li><a href="/playground">Playground</a></li>
+            <li><a href="/not-found">Not Found</a></li>
 
           </ul>
         </nav>
-
-        {/*todo: protected routes and redirects */}
-        {/*https://www.sitepoint.com/react-router-v4-complete-guide/*/}
-        <Routes/>
-
       </div>
 
     )
