@@ -1,0 +1,17 @@
+@import "colors";
+@import "globals";
+@import "tour";
+
+$export: (
+        'colors': $colors
+);
+
+//to style the loading bar themes
+@each $value in $colors {
+  .loader--#{map-get($value, 'color')}:after{
+    background-color: #{map-get($value, hexValue)} !important;
+  }
+}
+
+@debug json-encode;
+@include json-encode($value: $export, $selector: '#sassData');

@@ -1,0 +1,18 @@
+.no-pad {
+  padding: 0 ;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.text-align {
+  &--right {
+    text-align: right;
+  }
+  &--center {
+    text-align: center;
+  }
+}
+
+$app-font: 'Roboto';
