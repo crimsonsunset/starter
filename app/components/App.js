@@ -6,7 +6,12 @@
 
 class App {
   constructor() {
-    this.displayName = "App";
+
+    const html = this.template();
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = html;
+    return tempDiv;
+
   }
 
   template() {

@@ -1,9 +1,5 @@
 import App from 'components/App';
 
-let app = new App().template();
-console.log(app);
+let app = new App();
 
-const tempDiv = document.createElement('div');
-tempDiv.innerHTML = app;
-
-document.getElementById('app').appendChild(tempDiv);
+document.getElementById('app').appendChild(app);
