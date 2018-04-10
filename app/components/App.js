@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import {Link} from 'react-router-dom';
 import Routes from 'config/routes';
 
+import styles from '../styles/index.scss'
 
 class App extends Component {
   constructor(props) {
