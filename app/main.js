@@ -1,5 +1,10 @@
-import App from 'components/App';
+import React from 'react';
+import ReactDOM from 'react-dom';
+// import 'styles/index.scss';
 
-let app = new App();
+import Router from 'components/Router';
 
-document.getElementById('app').appendChild(app);
+
+ReactDOM.render(
+  <Router/>,
+  document.getElementById('app'));
