@@ -1,191 +1,127 @@
+require('babel-register');
+require('dotenv').config();
 const path = require('path');
 const webpack = require('webpack');
-var d = require('babel-register');
-const WebpackUtils = require('./build-helpers/webpackUtil');
 import {mapValues} from 'lodash';
+import WebpackUtils from './build-helpers/webpackUtil';
+
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const HtmlWebpackExternalsPlugin = require('html-webpack-externals-plugin')
+const packageJSON = require(path.resolve(__dirname, 'package.json'));
+// const HtmlWebpackExternalsPlugin = require('html-webpack-externals-plugin');
 
 const LAUNCH_COMMAND = process.env.npm_lifecycle_event;
 const isProduction = LAUNCH_COMMAND === 'build';
-const buildInfoPlugin =
-	new webpack.DefinePlugin({
-		"build.info": {
-			version: JSON.stringify(require(path.resolve(__dirname, 'package.json')).version),
-			date: JSON.stringify(`${new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString().replace(/([\d]+:[\d]{2})(:[\d]{2})(.*)/, "$1$3")}`),
-			environment: JSON.stringify((isProduction) ? 'PRODUCTION' : 'DEVELOPMENT'),
-			name: JSON.stringify(require(path.resolve(__dirname, 'package.json')).name),
-		}
-	});
 
-const consoleRainbowPlugin =
-	new webpack.DefinePlugin({
-		'console.rainbow': function (color, input) {
-			console.log(`%c${input}`, `color:${color};`);
-		}
-	});
+// const PATHS = {
+//
+//     app: path.join(__dirname, './app'),
+//
+//     //sugared for import sanity
+//     components: path.join(__dirname, './app/components'),
+//     styles: path.join(__dirname, './app/styles'),
+//     config: path.join(__dirname, './app/config'),
+//     app_redux: path.join(__dirname, './app/redux'),
+//     assets: path.join(__dirname, './app/assets'),
+//     util: path.join(__dirname, './app/util'),
+//     node_modules: path.join(__dirname, './node_modules'),
+//     server: path.join(__dirname, './server'),
+// };
 
-
-const PATHS = {
-
-	app: path.join(__dirname, './app'),
-	// build: path.join(__dirname, 'dist', folder,'presentation-app/styleguide'),
-	// public: path.join(__dirname, 'assets/'),
-	// publicJs: './scripts/',
-	// publicStyles: './styles/',
-	// lib: path.join(__dirname, 'www/lib'),
-	// html: path.join(__dirname, './src/styleguide/index.html'),
-
-	//sugared for import sanity
-	// actionTypes: path.join(__dirname, '/src/action-types'),
-	components: path.join(__dirname, './app/components'),
-	config: path.join(__dirname, './app/config'),
-	// util: path.join(__dirname, '/src/util'),
-	// assets: path.join(__dirname, '/static'),
-	// styles: path.join(__dirname, '/src/scss'),
-	// styleguide: path.join(__dirname, '/src/styleguide'),
-	// services: path.join(__dirname, '/src/services'),
-};
-
-const alias = {
-	// ...WebpackUtils.createComponentAliases(PATHS.components),
-	...mapValues(PATHS, (e, i) => {
-			return path.resolve(__dirname, PATHS[i]);
-		})
-};
+// const alias = {
+//     ...WebpackUtils.createComponentAliases(PATHS.components),
+//     ...mapValues(PATHS, (e, i) => {
+//         return path.resolve(__dirname, PATHS[i]);
+//     })
+// };
 
 
 module.exports = {
-  // entry: './app/main.js',
-  // output: {
-  // 	path: path.resolve(__dirname, './dist'),
-  // 	// publicPath: '/dist/',
-  // 	filename: 'build.js'
-  // },
-  entry: './app/main.js',
-  output: {
-    path: __dirname + '/dist',
-    filename: 'build.js'
-  },
-  module: {
-    rules: [
-      {
-        test: /\.jsx?$/,
-        loader: 'babel-loader',
-        exclude: /node_modules/,
-        query: {
-          cacheDirectory: true
-        }
-      },
-      // {
-      // 	test: /\.svg$/,
-      // 	loader: 'file-loader'
-      // },
-      {
-        test: /\.(eot|ttf|woff|woff2)$/,
-        // loader: 'file?name=/public/fonts/[name].[ext]',
-        loaders: ['url-loader']
-      },
-      {
-        test: /\.scss$/,
-        loaders: ['style-loader', 'css-loader', 'sass-loader'],
-      },
-      {
-        test: /\.css$/,
-        loaders: ['style-loader', 'css-loader'],
-      },
-      {
-        test: /\.styl$/,
-        // loader: 'css-loader!stylus-loader?paths=node_modules/bootstrap-stylus/stylus/'
-        loader: ['style-loader', 'css-loader', 'stylus-loader']
-      },
-      {
-        test: /\.(png|jpg|gif|svg)$/,
-        loader: 'file-loader',
-        options: {
-          name: '[name].[ext]?[hash]'
-        }
-      }
-    ]
-  },
-  resolve: {
-    modules: ['node_modules'],
-    extensions: ['.js', '.jsx', '.min.js'],
-    alias
-  },
-  devServer: {
-    historyApiFallback: true,
-    hot: true,
-    inline: true,
-    // noInfo: true
-    // historyApiFallback: {
-    //     index: path.resolve(PATHS.views, 'index.html'),
-    // },
+    module: {
+        rules: [
+            {
+                test: /\.jsx?$/,
+                loader: 'babel-loader',
+                exclude: /node_modules/,
+                query: {
+                    cacheDirectory: true
+                }
+            },
+            {
+                test: /\.(eot|ttf|woff|woff2)$/,
+                // loader: 'file?name=/public/fonts/[name].[ext]',
+                loaders: ['url-loader']
+            },
+            {
+                test: /\.scss$/,
+                loaders: ['style-loader', 'css-loader', 'sass-loader'],
+            },
+            {
+                test: /\.css$/,
+                loaders: ['style-loader', 'css-loader'],
+            },
+            // {
+            //     test: /\.styl$/,
+            //     loader: ['style-loader', 'css-loader', 'stylus-loader']
+            // },
+            {
+                test: /\.(png|jpg|gif|svg)$/,
+                loader: 'file-loader',
+                options: {
+                    name: '[name].[ext]?[hash]'
+                }
+            },
+            {
+                test: /\.html$/,
+                use: [
+                    {
+                        loader: "html-loader",
+                        options: {minimize: true}
+                    }
+                ]
+            },
 
-  },
-  plugins: [
-    new HtmlWebpackPlugin({
-      showErrors: true,
-      title: 'Sports Rank',
-      template: 'index.tmpl'
-      // favicon: 'Sports Rank',
-    }),
-    // new WebpackCdnPlugin({
-    //   modules: [
-    //     // {
-    //     //   name: 'vue',
-    //     //   var: 'Vue',
-    //     //   style: 'dist/vue.css'
-    //     // },
-    //     {
-    //       name: 'bootstrap',
-    //       // cssOnly: true,
-    //       cdn: 'https://maxcdn.bootstrapcdn.com/bootstrap/latest/css/bootstrap.min.css'
-    //     }
-    //   ]
-    // }),
-    new HtmlWebpackExternalsPlugin({
-      externals: [
-        {
-          module: 'bootstrap',
-          entry: {
-            path: 'https://maxcdn.bootstrapcdn.com/bootstrap/latest/css/bootstrap.min.css',
-            type: 'css',
-          }
-        },
-        {
-          module: 'google-roboto',
-          entry: {
-            path: 'https://fonts.googleapis.com/css?family=Roboto',
-            type: 'css',
-          },
-        },
-      ],
-    }),
-    consoleRainbowPlugin,
-    buildInfoPlugin
-  ],
-  // performance: 'warning',
-  devtool: '#eval-source-map'
+        ]
+    },
+    plugins: [
+        new HtmlWebpackPlugin({
+            showErrors: true,
+            title: packageJSON.name,
+            template: 'index.tmpl'
+        }),
+        WebpackUtils.consoleRainbowPlugin,
+        WebpackUtils.buildInfoPlugin
+    ]
+
+    // plugins: [
+    //   new HtmlWebPackPlugin({
+    //     template: "./src/index.html",
+    //     filename: "./index.html"
+    //   }),
+    //   // new MiniCssExtractPlugin({
+    //   //   filename: "[name].css",
+    //   //   chunkFilename: "[id].css"
+    //   // })
+    // ]
 };
 
 
-if (process.env.NODE_ENV === 'production') {
-	module.exports.devtool = '#source-map'
-	module.exports.plugins = (module.exports.plugins || []).concat([
-		new webpack.DefinePlugin({
-			'process.env': {
-				NODE_ENV: '"production"'
-			}
-		}),
-		new webpack.optimize.UglifyJsPlugin({
-			sourceMap: true,
-			compress: {
-				warnings: false
-			}
-		}),
-		new webpack.LoaderOptionsPlugin({
-			minimize: true
-		})
-	])
-}
+// if (process.env.NODE_ENV === 'production') {
+//     module.exports.devtool = '#source-map';
+//     module.exports.plugins = (module.exports.plugins || []).concat([
+//         new webpack.DefinePlugin({
+//             'process.env': {
+//                 NODE_ENV: '"production"'
+//             }
+//         }),
+//         new webpack.optimize.UglifyJsPlugin({
+//             sourceMap: true,
+//             compress: {
+//                 warnings: false
+//             }
+//         }),
+//         new webpack.LoaderOptionsPlugin({
+//             minimize: true
+//         })
+//     ])
+// }
+

@@ -1,6 +1,7 @@
 const webpack = require('webpack');
 const {resolve, join} = require('path');
 const {lstatSync, readdirSync, existsSync} = require('fs');
+require('dotenv').config();
 
 class WebpackUtils {
   constructor() {
@@ -26,15 +27,25 @@ class WebpackUtils {
       new webpack.DefinePlugin({
         'build.info': {
           version: JSON.stringify(version),
-          date: JSON.stringify(`${new Date().toLocaleDateString() + ' '
-          + new Date().toLocaleTimeString()
-            .replace(/([\d]+:[\d]{2})(:[\d]{2})(.*)/, '$1$3')}`),
+          date: JSON.stringify(`${new Date().toLocaleDateString('en-US')} - ${WebpackUtils.formatAMPM(new Date())}`),
           name: JSON.stringify(name),
           environment: JSON.stringify(NODE_ENV)
+        },
+        'build.keys': {
+          GMAPS_API_KEY: JSON.stringify(process.env.GMAPS_API_KEY),
         }
       });
   }
-
+  static formatAMPM(date) {
+    let hours = date.getHours();
+    let minutes = date.getMinutes();
+    let ampm = hours >= 12 ? 'pm' : 'am';
+    hours = hours % 12;
+    hours = hours ? hours : 12; // the hour '0' should be '12'
+    minutes = minutes < 10 ? '0'+minutes : minutes;
+    let strTime = hours + ':' + minutes + ' ' + ampm;
+    return strTime;
+  }
   createComponentAliases(source) {
     const isDirectory = source => lstatSync(source)
       .isDirectory();
@@ -56,73 +67,6 @@ class WebpackUtils {
 
     return aliases;
   }
-
-  // resolveLoaders() {
-  //   const {LEVEL} = process.env;
-  //   //can set default levels here
-  //   let outputLevel = 'silent',
-  //     eslintLoader = undefined,
-  //     postCSSLoader = {
-  //       loader: 'postcss-loader',
-  //       options: {
-  //         sourceMap: true
-  //       }
-  //     };
-  //
-  //   if (LEVEL === 'warn') {
-  //     outputLevel = 'warn';
-  //     eslintLoader = {
-  //       loader: 'eslint-loader',
-  //       options: {
-  //         emitWarning: true,
-  //         formatter: lintFormatter
-  //       }
-  //     };
-  //     postCSSLoader = {
-  //       loader: 'postcss-loader',
-  //       options: {
-  //         sourceMap: true,
-  //         plugins: [
-  //           require('stylelint')(),
-  //           cssReporter({
-  //             clearReportedMessages: true
-  //           })
-  //         ]
-  //       }
-  //     };
-  //   } else if (LEVEL === 'error') {
-  //     outputLevel = 'error';
-  //     eslintLoader = {
-  //       loader: 'eslint-loader',
-  //       options: {
-  //         emitError: true,
-  //         formatter: lintFormatter
-  //       }
-  //     };
-  //     postCSSLoader = {
-  //       loader: 'postcss-loader',
-  //       options: {
-  //         sourceMap: true,
-  //         plugins: [
-  //           require('stylelint')(),
-  //           cssReporter({
-  //             clearReportedMessages: true,
-  //             throwError: true //todo: this will make the style linter throw errors
-  //           })
-  //         ]
-  //       }
-  //     };
-  //
-  //   } else if (LEVEL === 'silent') {
-  //     outputLevel = 'silent';
-  //   }
-  //   return {
-  //     postCSSLoader,
-  //     eslintLoader,
-  //     outputLevel
-  //   };
-  // }
-
 }
 
 module.exports = new WebpackUtils();

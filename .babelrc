@@ -1,15 +1,15 @@
 {
-  "presets": [
-    "react",
-    [
-      "env",
-      {
-        "modules": "commonjs"
-      }
+    "presets": [
+        "react",
+        [
+            "env",
+            {
+                "modules": "commonjs"
+            }
+        ],
+        "stage-0"
     ],
-    "stage-0"
-  ],
-  "plugins": [
-    "transform-class-properties"
-  ]
+    "plugins": [
+        "transform-class-properties"
+    ]
 }
