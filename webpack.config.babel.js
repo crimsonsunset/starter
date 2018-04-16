@@ -36,7 +36,10 @@ const alias = {
 
 
 module.exports = {
-  entry: './app/main.js',
+  entry: [
+    'react-hot-loader/patch',
+    './app/main.js'
+  ],
   output: {
     path: __dirname + '/dist',
     filename: 'build.js'
@@ -92,16 +95,17 @@ module.exports = {
     extensions: ['.js', '.jsx', '.min.js'],
     alias
   },
-  // devServer: {
-  //   historyApiFallback: true,
-  //   hot: true,
-  //   inline: true,
-  //   // noInfo: true
-  //   // historyApiFallback: {
-  //   //     index: path.resolve(PATHS.views, 'index.html'),
-  //   // },
-  //
-  // },
+  devServer: {
+    contentBase: './dist',
+    historyApiFallback: true,
+    hot: true,
+    // inline: true,
+    // noInfo: true
+    // historyApiFallback: {
+    //     index: path.resolve(PATHS.views, 'index.html'),
+    // },
+
+  },
   plugins: [
     new HtmlWebpackPlugin({
       showErrors: true,
@@ -109,7 +113,9 @@ module.exports = {
       template: 'index.tmpl'
     }),
     WebpackUtils.consoleRainbowPlugin,
-    WebpackUtils.buildInfoPlugin
+    WebpackUtils.buildInfoPlugin,
+    new webpack.NamedModulesPlugin(),
+    new webpack.HotModuleReplacementPlugin()
   ],
   devtool: '#eval-source-map'
 };

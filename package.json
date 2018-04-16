@@ -6,7 +6,7 @@
   "license": "MIT",
   "main": "index.js",
   "scripts": {
-    "start": "cross-env NODE_ENV=development webpack-dev-server --mode development --open",
+    "start": "cross-env NODE_ENV=development webpack-dev-server --config ./webpack.config.babel.js --mode development --open",
     "build": "cross-env NODE_ENV=production webpack --mode production"
   },
   "repository": {
@@ -36,6 +36,7 @@
     "node-sass": "^4.8.3",
     "react": "^16.3.0",
     "react-dom": "^16.3.0",
+    "react-hot-loader": "^4.0.1",
     "react-router-dom": "^4.2.2",
     "sass-loader": "^7.0.1",
     "style-loader": "^0.20.3",

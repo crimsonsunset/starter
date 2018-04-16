@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import {BrowserRouter} from 'react-router-dom';
+import { hot } from 'react-hot-loader'
 import App from 'components/App';
 import HomeView from "./views/HomeView";
 
@@ -18,4 +19,5 @@ class Router extends Component {
   }
 }
 
-export default Router;
+// export default Router;
+export default hot(module)(Router)
