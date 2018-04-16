@@ -18,7 +18,7 @@ class HomeView extends Component {
 
         <nav className="panel">
           <p className="panel-heading">
-            Job Search
+            Job JOE
           </p>
           <div className="panel-block">
             <p className="control has-icons-left">

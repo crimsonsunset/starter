@@ -1,23 +1,20 @@
 {
-  "name": "webpack-4-quickstart",
-  "version": "1.0.0",
-  "description": "> Webpack 4 tutorial: All You Need to Know, from 0 Conf to Production Mode",
+  "name": "Code-Starter",
+  "description": "Code Starter Source Code",
+  "version": "0.0.1",
+  "author": "Joe Sangiorgio",
+  "license": "MIT",
   "main": "index.js",
   "scripts": {
-    "start": "webpack-dev-server --mode development --open",
-    "build": "webpack --mode production"
+    "start": "cross-env NODE_ENV=development webpack-dev-server --mode development --open",
+    "build": "cross-env NODE_ENV=production webpack --mode production"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/valentinogagliardi/webpack-4-quickstart.git"
+    "url": "git+https://github.com/crimsonsunset/starter"
   },
   "keywords": [],
-  "author": "",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/valentinogagliardi/webpack-4-quickstart/issues"
-  },
-  "homepage": "https://github.com/valentinogagliardi/webpack-4-quickstart#readme",
+  "homepage": "https://github.com/crimsonsunset/starter",
   "devDependencies": {
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.4",
