@@ -1,0 +1,1 @@
+export SearchState from './searchDispatch'
