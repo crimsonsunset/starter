@@ -3,22 +3,19 @@ require('dotenv').config();
 const path = require('path');
 const webpack = require('webpack');
 import {mapValues} from 'lodash';
-import WebpackUtils from './build-helpers/webpackUtil';
+import WebpackUtils from './webpackUtil';
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const packageJSON = require(path.resolve(__dirname, 'package.json'));
-// const HtmlWebpackExternalsPlugin = require('html-webpack-externals-plugin');
-
 const LAUNCH_COMMAND = process.env.npm_lifecycle_event;
 const isProduction = LAUNCH_COMMAND === 'build';
 
 
-// import webpackBase from './base.config.babel';
 
+// const HtmlWebpackExternalsPlugin = require('html-webpack-externals-plugin');
 
 const PATHS = {
 
   app: path.join(__dirname, './app'),
-  entry: path.join(__dirname, './app/main.js'),
 
   //sugared for import sanity
   components: path.join(__dirname, './app/components'),
@@ -29,7 +26,6 @@ const PATHS = {
   util: path.join(__dirname, './app/util'),
   node_modules: path.join(__dirname, './node_modules'),
   server: path.join(__dirname, './server'),
-  dist: path.join(__dirname, './dist')
 };
 
 const alias = {
@@ -41,33 +37,13 @@ const alias = {
 
 
 module.exports = {
-  // entry: [
-  //   'react-hot-loader/patch',
-  //   './app/main.js'
-  // ],
-  entry: {
-    app: ['react-hot-loader/patch', PATHS.entry],
-    // vendors: Object.keys(packageJSON.dependencies)
-    // vendors: Object.keys(packageJSON.devDependencies)
-  },
+  entry: [
+    'react-hot-loader/patch',
+    './app/main.js'
+  ],
   output: {
-    path: PATHS.dist,
+    path: __dirname + '/dist',
     filename: 'build.js'
-  },
-  context: __dirname,
-  mode: 'development', //todo: process.env.npm_lifecycle_event
-  optimization: {
-    runtimeChunk: 'single',
-    splitChunks: {
-      cacheGroups: {
-        vendors: {
-          test: /[\\/]node_modules[\\/]/,
-          name: 'vendors',
-          enforce: true,
-          chunks: 'all'
-        }
-      }
-    }
   },
   module: {
     rules: [
@@ -121,14 +97,15 @@ module.exports = {
     alias
   },
   devServer: {
-    contentBase: PATHS.dist,
-    compress: true,
+    contentBase: './dist',
     historyApiFallback: true,
     hot: true,
-    open: true,
-  },
-  stats: {
-    children: false
+    // inline: true,
+    // noInfo: true
+    // historyApiFallback: {
+    //     index: path.resolve(PATHS.views, 'index.html'),
+    // },
+
   },
   plugins: [
     new HtmlWebpackPlugin({
@@ -148,7 +125,6 @@ module.exports = {
     new webpack.NamedModulesPlugin(),
     new webpack.HotModuleReplacementPlugin()
   ],
-  // devtool: 'eval',
   devtool: '#eval-source-map'
 };
 

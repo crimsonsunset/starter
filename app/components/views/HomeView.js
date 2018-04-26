@@ -18,7 +18,7 @@ class HomeView extends Component {
 
         <nav className="panel">
           <p className="panel-heading">
-            wow this is fast
+            wow this is asdasdasd
           </p>
           <div className="panel-block">
             <p className="control has-icons-left">
