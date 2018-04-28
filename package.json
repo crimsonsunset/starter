@@ -7,7 +7,10 @@
   "main": "index.js",
   "scripts": {
     "start": "cross-env NODE_ENV=development webpack-dev-server --config ./webpack.config.babel.js --mode development --open 'Google Chrome'",
-    "build": "cross-env NODE_ENV=production webpack --mode production"
+    "build": "npm run clean && cross-env BABEL_ENV=production NODE_ENV=production webpack --mode production",
+    "clean": "rimraf dist",
+    "dev": "yarn run start",
+    "stats": "webpack --profile --json > stats.json"
   },
   "repository": {
     "type": "git",

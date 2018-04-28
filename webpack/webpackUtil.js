@@ -16,14 +16,12 @@ class WebpackUtils {
     const version = (packageJSON) ? packageJSON.version : 'NA-Version';
     const name = (packageJSON) ? packageJSON.name : 'NA-Name';
 
-    this.consoleRainbowPlugin =
+    this.plugins = [
       new webpack.DefinePlugin({
         'console.rainbow': function (color, input) {
           console.log(`%c${input}`, `color:${color};`);
         }
-      });
-
-    this.buildInfoPlugin =
+      }),
       new webpack.DefinePlugin({
         'build.info': {
           version: JSON.stringify(version),
@@ -34,7 +32,8 @@ class WebpackUtils {
         'build.keys': {
           GMAPS_API_KEY: JSON.stringify(process.env.GMAPS_API_KEY),
         }
-      });
+      })
+    ]
   }
   static formatAMPM(date) {
     let hours = date.getHours();

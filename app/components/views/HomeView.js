@@ -18,7 +18,7 @@ class HomeView extends Component {
 
         <nav className="panel">
           <p className="panel-heading">
-            wow this is asdasdasd
+            wow this is ssss
           </p>
           <div className="panel-block">
             <p className="control has-icons-left">
@@ -28,9 +28,9 @@ class HomeView extends Component {
       {/*</span>*/}
 
               <span class="icon is-small is-left">
-  <object data={mainLogo} type="image/svg+xml">
-  <img src="yourfallback.jpg"/>
-</object>
+  {/*<object data={mainLogo} type="image/svg+xml">*/}
+  {/*<img src="yourfallback.jpg"/>*/}
+{/*</object>*/}
 </span>
 
             </p>

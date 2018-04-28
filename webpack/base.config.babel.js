@@ -1,133 +1,167 @@
 require('babel-register');
 require('dotenv').config();
 const path = require('path');
+const basePath = path.join(__dirname, '../');
 const webpack = require('webpack');
-import {mapValues} from 'lodash';
+
+import {mapValues, bindAll} from 'lodash';
 import WebpackUtils from './webpackUtil';
+
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const packageJSON = require(path.resolve(__dirname, 'package.json'));
-const LAUNCH_COMMAND = process.env.npm_lifecycle_event;
-const isProduction = LAUNCH_COMMAND === 'build';
-
-
-
+const packageJSON = require(path.resolve(basePath, 'package.json'));
 // const HtmlWebpackExternalsPlugin = require('html-webpack-externals-plugin');
 
-const PATHS = {
 
-  app: path.join(__dirname, './app'),
+export default class WebpackBase {
 
-  //sugared for import sanity
-  components: path.join(__dirname, './app/components'),
-  styles: path.join(__dirname, './app/styles'),
-  config: path.join(__dirname, './app/config'),
-  app_redux: path.join(__dirname, './app/redux'),
-  assets: path.join(__dirname, './app/assets'),
-  util: path.join(__dirname, './app/util'),
-  node_modules: path.join(__dirname, './node_modules'),
-  server: path.join(__dirname, './server'),
-};
+  constructor(env) {
+    this.env = env;
+    this.isDev = (this.env === 'development');
+    // this.config = {}
+    bindAll(this, [
+      '_generateConfig',
+    ]);
+    this._generateConfig();
+  }
 
-const alias = {
-  ...WebpackUtils.createComponentAliases(PATHS.components),
-  ...mapValues(PATHS, (e, i) => {
-    return path.resolve(__dirname, PATHS[i]);
-  })
-};
-
-
-module.exports = {
-  entry: [
-    'react-hot-loader/patch',
-    './app/main.js'
-  ],
-  output: {
-    path: __dirname + '/dist',
-    filename: 'build.js'
-  },
-  module: {
-    rules: [
-      {
-        test: /\.jsx?$/,
-        loader: 'babel-loader',
-        exclude: /node_modules/,
-        query: {
-          cacheDirectory: true
-        }
+  _generateConfig() {
+    this.config = {
+      // entry: [
+      //   'react-hot-loader/patch',
+      //   './app/main.js'
+      // ],
+      entry: {
+        app: ['react-hot-loader/patch', WebpackBase.PATHS.entry],
+        // vendors: Object.keys(packageJSON.dependencies)
+        // vendors: Object.keys(packageJSON.devDependencies)
       },
-      {
-        test: /\.(eot|ttf|woff|woff2)$/,
-        // loader: 'file?name=/public/fonts/[name].[ext]',
-        loaders: ['url-loader']
+      output: {
+        path: WebpackBase.PATHS.dist,
+        filename: 'build.js'
       },
-      {
-        test: /\.scss$/,
-        loaders: ['style-loader', 'css-loader', 'sass-loader'],
-      },
-      {
-        test: /\.css$/,
-        loaders: ['style-loader', 'css-loader'],
-      },
-      // {
-      //     test: /\.styl$/,
-      //     loader: ['style-loader', 'css-loader', 'stylus-loader']
-      // },
-      {
-        test: /\.(png|jpg|gif|svg)$/,
-        loader: 'file-loader',
-        options: {
-          name: '[name].[ext]?[hash]'
-        }
-      },
-      {
-        test: /\.html$/,
-        use: [
-          {
-            loader: "html-loader",
-            options: {minimize: true}
+      context: basePath,
+      mode: this.env,
+      optimization: {
+        runtimeChunk: 'single',
+        splitChunks: {
+          cacheGroups: {
+            vendors: {
+              test: /[\\/]node_modules[\\/]/,
+              name: 'vendors',
+              enforce: true,
+              chunks: 'all'
+            }
           }
+        }
+      },
+      module: {
+        rules: [
+          {
+            test: /\.jsx?$/,
+            loader: 'babel-loader',
+            exclude: /node_modules/,
+            query: {
+              cacheDirectory: true
+            }
+          },
+          {
+            test: /\.(eot|ttf|woff|woff2)$/,
+            // loader: 'file?name=/public/fonts/[name].[ext]',
+            loaders: ['url-loader']
+          },
+          {
+            test: /\.scss$/,
+            loaders: ['style-loader', 'css-loader', 'sass-loader'],
+          },
+          {
+            test: /\.css$/,
+            loaders: ['style-loader', 'css-loader'],
+          },
+          // {
+          //     test: /\.styl$/,
+          //     loader: ['style-loader', 'css-loader', 'stylus-loader']
+          // },
+          {
+            test: /\.(png|jpg|gif|svg)$/,
+            loader: 'file-loader',
+            options: {
+              name: '[name].[ext]?[hash]'
+            }
+          },
+          {
+            test: /\.html$/,
+            use: [
+              {
+                loader: "html-loader",
+                options: {minimize: true}
+              }
+            ]
+          },
+
         ]
       },
+      resolve: {
+        modules: ['node_modules'],
+        extensions: ['.js', '.jsx', '.min.js'],
+        alias: WebpackBase.alias
+      },
+      devServer: {
+        contentBase: WebpackBase.PATHS.dist,
+        compress: true,
+        historyApiFallback: true,
+        hot: true,
+        open: true,
+      },
+      stats: {
+        children: false
+      },
+      plugins: [
+        new HtmlWebpackPlugin({
+          showErrors: true,
+          title: packageJSON.name,
+          template: 'index.tmpl',
+          favicon: 'favicon.ico',
+          minify: {
+            collapseWhitespace: true,
+            conservativeCollapse: true,
+            preserveLineBreaks: true,
+            useShortDoctype: true,
+            html5: true
+          }
+        }),
+        new webpack.NamedModulesPlugin(),
+        new webpack.HotModuleReplacementPlugin(),
+        ...WebpackUtils.plugins,
+      ],
+      // devtool: 'eval',
+      devtool: '#eval-source-map'
+    };
+  }
 
-    ]
-  },
-  resolve: {
-    modules: ['node_modules'],
-    extensions: ['.js', '.jsx', '.min.js'],
-    alias
-  },
-  devServer: {
-    contentBase: './dist',
-    historyApiFallback: true,
-    hot: true,
-    // inline: true,
-    // noInfo: true
-    // historyApiFallback: {
-    //     index: path.resolve(PATHS.views, 'index.html'),
-    // },
+  static PATHS = {
 
-  },
-  plugins: [
-    new HtmlWebpackPlugin({
-      showErrors: true,
-      title: packageJSON.name,
-      template: 'index.tmpl',
-      minify: {
-        collapseWhitespace: true,
-        conservativeCollapse: true,
-        preserveLineBreaks: true,
-        useShortDoctype: true,
-        html5: true
-      }
-    }),
-    WebpackUtils.consoleRainbowPlugin,
-    WebpackUtils.buildInfoPlugin,
-    new webpack.NamedModulesPlugin(),
-    new webpack.HotModuleReplacementPlugin()
-  ],
-  devtool: '#eval-source-map'
-};
+    app: path.join(basePath, './app'),
+    entry: path.join(basePath, './app/main.js'),
 
+    //sugared for import sanity
+    components: path.join(basePath, './app/components'),
+    styles: path.join(basePath, './app/styles'),
+    config: path.join(basePath, './app/config'),
+    app_redux: path.join(basePath, './app/redux'),
+    assets: path.join(basePath, './app/assets'),
+    util: path.join(basePath, './app/util'),
+    node_modules: path.join(basePath, './node_modules'),
+    server: path.join(basePath, './server'),
+    dist: path.join(basePath, './dist')
+  };
+
+  static alias = {
+    ...WebpackUtils.createComponentAliases(WebpackBase.PATHS.components),
+    ...mapValues(WebpackBase.PATHS, (e, i) => {
+      return path.resolve(basePath, WebpackBase.PATHS[i]);
+    })
+  };
+}
 
 // if (process.env.NODE_ENV === 'production') {
 //     module.exports.devtool = '#source-map';
