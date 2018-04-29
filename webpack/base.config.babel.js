@@ -3,10 +3,8 @@ require('dotenv').config();
 const path = require('path');
 const basePath = path.join(__dirname, '../');
 const webpack = require('webpack');
-
-import {mapValues, bindAll} from 'lodash';
+import {mapValues, bindAll, words} from 'lodash';
 import WebpackUtils from './webpackUtil';
-
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const packageJSON = require(path.resolve(basePath, 'package.json'));
 // const HtmlWebpackExternalsPlugin = require('html-webpack-externals-plugin');
@@ -16,8 +14,7 @@ export default class WebpackBase {
 
   constructor(env) {
     this.env = env;
-    this.isDev = (this.env === 'development');
-    // this.config = {}
+    this.isProd = (this.env === 'production');
     bindAll(this, [
       '_generateConfig',
     ]);
@@ -25,18 +22,15 @@ export default class WebpackBase {
   }
 
   _generateConfig() {
+    const {PATHS, alias} = WebpackBase;
+
     this.config = {
-      // entry: [
-      //   'react-hot-loader/patch',
-      //   './app/main.js'
-      // ],
       entry: {
-        app: ['react-hot-loader/patch', WebpackBase.PATHS.entry],
-        // vendors: Object.keys(packageJSON.dependencies)
-        // vendors: Object.keys(packageJSON.devDependencies)
+        app: ['react-hot-loader/patch', PATHS.entry],
+        vendors: Object.keys(packageJSON.dependencies)
       },
       output: {
-        path: WebpackBase.PATHS.dist,
+        path: PATHS.dist,
         filename: 'build.js'
       },
       context: basePath,
@@ -70,8 +64,24 @@ export default class WebpackBase {
             loaders: ['url-loader']
           },
           {
-            test: /\.scss$/,
-            loaders: ['style-loader', 'css-loader', 'sass-loader'],
+            test: /\.(scss|sass)$/,
+            use: [
+              {
+                loader: 'style-loader'
+              },
+              {
+                loader: 'css-loader',
+                options: {
+                  // modules: true,
+                  camelCase: 'dashes',
+                  minimize: this.isProd
+                  // localIdentName: '[path][name]__[local]'
+                }
+              },
+              {
+                loader: 'sass-loader'
+              }
+            ]
           },
           {
             test: /\.css$/,
@@ -103,10 +113,10 @@ export default class WebpackBase {
       resolve: {
         modules: ['node_modules'],
         extensions: ['.js', '.jsx', '.min.js'],
-        alias: WebpackBase.alias
+        alias
       },
       devServer: {
-        contentBase: WebpackBase.PATHS.dist,
+        contentBase: PATHS.dist,
         compress: true,
         historyApiFallback: true,
         hot: true,
@@ -118,7 +128,7 @@ export default class WebpackBase {
       plugins: [
         new HtmlWebpackPlugin({
           showErrors: true,
-          title: packageJSON.name,
+          title: words(packageJSON.name),
           template: 'index.tmpl',
           favicon: 'favicon.ico',
           minify: {
@@ -131,6 +141,14 @@ export default class WebpackBase {
         }),
         new webpack.NamedModulesPlugin(),
         new webpack.HotModuleReplacementPlugin(),
+        new webpack.DefinePlugin({
+          PRODUCTION: JSON.stringify(this.isProd)
+        }),
+
+        // (this.isProd) ? new MiniCssExtractPlugin({
+        //   filename: '[name].[chunkhash].css'
+        // }) : {},
+
         ...WebpackUtils.plugins,
       ],
       // devtool: 'eval',
@@ -162,24 +180,3 @@ export default class WebpackBase {
     })
   };
 }
-
-// if (process.env.NODE_ENV === 'production') {
-//     module.exports.devtool = '#source-map';
-//     module.exports.plugins = (module.exports.plugins || []).concat([
-//         new webpack.DefinePlugin({
-//             'process.env': {
-//                 NODE_ENV: '"production"'
-//             }
-//         }),
-//         new webpack.optimize.UglifyJsPlugin({
-//             sourceMap: true,
-//             compress: {
-//                 warnings: false
-//             }
-//         }),
-//         new webpack.LoaderOptionsPlugin({
-//             minimize: true
-//         })
-//     ])
-// }
-
